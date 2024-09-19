@@ -1,181 +1,135 @@
 const SharepointClass = require("../middleware/sharepoint.class");
 const { v4: uuidv4 } = require("uuid");
 
-// Create an Object of Resource Class use to use All methods.
+// Instantiate SharePoint service class to use its methods
 const sharepointCLS = new SharepointClass();
 
+// Fetch SharePoint sites for the specified domain
 exports.getSharepointSites = async (req, res) => {
-  console.log("Fetching sharepoint sites....");
+  console.log("Fetching SharePoint sites...");
 
   try {
-    // set variables
     const headers = {
       Authorization: `Bearer ${req.headers.sp_access_token}`,
       "Content-Type": "application/json",
     };
+    const sp_domain_name = req.params.sp_domain_name;
 
-    // prep headers for azure
-    const az_headers = {
-      sp_access_token: req.headers.sp_access_token,
-    };
+    // Retrieve SharePoint sites using the service class
+    const spDetails = await sharepointCLS.getSharepointSites(headers, sp_domain_name);
 
-    // check if sharepoint access
-    const spDetails = await sharepointCLS.getSharepointSites(headers);
-
-    if (spDetails.status == true) {
-      res.status(200).send({
+    if (spDetails.status) {
+      return res.status(200).send({
         success: true,
         spDetails,
-        message: "Response has been fetched",
+        message: "SharePoint sites fetched successfully.",
       });
     } else {
-      res.status(200).send({
+      return res.status(200).send({
         success: false,
-        message: "Error uploading file",
+        message: "Error retrieving SharePoint sites.",
       });
     }
   } catch (err) {
-    res.status(500).send({
+    return res.status(500).send({
       success: false,
-      message: "Error uploading file",
+      message: "Internal Server Error.",
       result: err,
     });
   }
 };
 
+// Fetch SharePoint folder lists for the specified site or item
 exports.getSharepointFolderLists = async (req, res) => {
-
   try {
-    // set variables
     const headers = {
       Authorization: `Bearer ${req.headers.sp_access_token}`,
       "Content-Type": "application/json",
     };
+    const { site_id, item_id } = req.body;
 
-    // GET BODY VALUES
-    const { workspace_id, site_id, item_id } = req.body;
+    if (!item_id) {
+      // Retrieve the drive ID for the given site
+      const getDriveID = await sharepointCLS.getSharepointDriveID(site_id, headers);
 
-    // prep headers for azure
-    const az_headers = {
-      sp_access_token: req.headers.sp_access_token,
-    };
+      if (getDriveID.status) {
+        // Fetch folder list using the drive ID
+        const spDetails = await sharepointCLS.getSharepointFolderList(site_id, getDriveID.drive_id, headers);
 
-    if (item_id == "") {
-      // console.log("Calling.... Folder List::: NOT Found Item ID ");
-      // get drive id
-      const getDriveID = await sharepointCLS.getSharepointDriveID(
-        workspace_id,
-        site_id,
-        headers
-      );
-      // console.log('getDriveID, ',  getDriveID);
-      if (getDriveID.status == true) {
-        // check if sharepoint access
-        const spDetails = await sharepointCLS.getSharepointFolderList(
-          workspace_id,
-          site_id,
-          getDriveID.drive_id,
-          user_id,
-          headers
-        );
-
-        if (spDetails.status == true) {
-          res.status(200).send({
+        if (spDetails.status) {
+          return res.status(200).send({
             success: true,
             spDetails,
-            message: "Response has been fetched",
+            message: "Folder list fetched successfully.",
           });
         } else {
-          res.status(200).send({
+          return res.status(200).send({
             success: false,
-            message: "Unauthorized access to Sharepoint",
+            message: "Unauthorized access to SharePoint.",
           });
         }
       } else {
-        res.status(getDriveID.statusCode).send({
+        return res.status(getDriveID.statusCode).send({
           status: false,
           statusCode: getDriveID.statusCode,
           message: getDriveID.data.error.message,
         });
       }
     } else {
-      // check if sharepoint access
-      const spDetails = await sharepointCLS.sharepointFolderTraversing(
-        workspace_id,
-        site_id,
-        item_id,
-        user_id,
-        headers
-      );
+      // Traverse the folder structure if an item ID is provided
+      const spDetails = await sharepointCLS.sharepointFolderTraversing(site_id, item_id, headers);
 
-      if (spDetails.status == true) {
-        res.status(200).send({
+      if (spDetails.status) {
+        return res.status(200).send({
           success: true,
           spDetails,
-          message: "Response has been fetched",
+          message: "Folder list fetched successfully.",
         });
       } else {
-        res.status(200).send({
+        return res.status(200).send({
           success: false,
-          message: "Unauthorized access to Sharepoint",
+          message: "Unauthorized access to SharePoint.",
         });
       }
     }
   } catch (err) {
-    res.status(500).send({
+    return res.status(500).send({
       success: false,
-      message: "Unauthorized access to Sharepoint",
+      message: "Internal Server Error.",
       result: err,
     });
   }
 };
 
+// Traverse SharePoint folder structure
 exports.sharepointFolderTraverse = async (req, res) => {
-  // console.log("Fetching sharepoint sites....");
-  // get user
-  const user_id = await getUserAccount(req);
-
   try {
-    // set variables
     const headers = {
       Authorization: `Bearer ${req.headers.sp_access_token}`,
       "Content-Type": "application/json",
     };
-
-    // GET BODY VALUES
     const { site_id, item_id } = req.body;
 
-    // prep headers for azure
-    const az_headers = {
-      sp_access_token: req.headers.sp_access_token,
-    };
+    // Traverse the folder structure using the SharePoint service
+    const spFolderDetails = await sharepointCLS.sharepointFolderTraversing(site_id, item_id, headers);
 
-    // check if sharepoint access
-    const spFolderDetails = await sharepointCLS.sharepointFolderTraversing(
-      site_id,
-      item_id,
-      user_id,
-      headers
-    );
-
-    if (spFolderDetails.status == true) {
-      res.status(200).send({
+    if (spFolderDetails.status) {
+      return res.status(200).send({
         success: true,
         spFolderDetails,
-        message: "Response has been fetched",
+        message: "Folder structure traversed successfully.",
       });
     } else {
-      res.status(200).send({
+      return res.status(200).send({
         success: false,
-        message: "Unauthorized access to Sharepoint",
+        message: "Unauthorized access to SharePoint.",
       });
     }
   } catch (err) {
-    res.status(500).send({
+    return res.status(500).send({
       success: false,
-      message: "Unauthorized access to Sharepoint",
+      message: "Internal Server Error.",
       result: err,
     });
   }
 };
-

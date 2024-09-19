@@ -1,17 +1,19 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-// Listed to import Controllers of All Resourse's Endpoints to use the Business Logic.
+// Import SharePoint controller to handle the business logic for endpoints
 const sharepointControl = require("../controllers/sharepoint.controllers");
 
-module.exports = app => {
+module.exports = (app) => {
+    // Endpoint to fetch SharePoint sites based on the domain name
+    router.get('/sharepoint-sites/:sp_domain_name', sharepointControl.getSharepointSites);
 
-    router.get('/sharepoint-sites/', sharepointControl.getSharepointSites);
+    // Endpoint to fetch SharePoint folder lists
+    router.post('/sharepoint-folders/', sharepointControl.getSharepointFolderLists);
 
-    router.post('/sharepoint-folders/',sharepointControl.getSharepointFolderLists);
-
+    // Endpoint to traverse SharePoint folder structure
     router.post('/sharepoint-traverse/', sharepointControl.sharepointFolderTraverse);
-    
-    app.use('/api/v1/middleware/workspace', router);
 
+    // Use the routes under the `/api/v1` prefix
+    app.use('/api/v1', router);
 };

@@ -9,10 +9,8 @@ global.appRoot = path.resolve(__dirname);
 
 const app = express();
 
-// HR Logo
+//Logo
 app.use('/images', express.static(__dirname + '/images'));
-
-//const PORT = process.env.PORT | 8080;
 
 /**
  * Normalize a port into a number, string, or false.
@@ -40,11 +38,6 @@ const PORT = normalizePort(process.env.PORT || '8000');
 
 if (!(process.env["Prod"])){
   //In Dev
-
-  //Sharepoint Access IDs
-  process.env.SP_SITE_ID = "hanoverresearch.sharepoint.com,2f06ace6-fa51-47bb-9d58-bf2751165d0f,25f87922-237b-4f6f-9c3e-ed2b9aba01d4"; // This is the Neudesic Test Site
-  process.env.SP_LIST_ID = "f998ac8a-7f82-44e1-a771-8b22afb0a7f4"; // This is Test Hive Prompt List which is associated with above Site
-  
   process.env.appUrl = 'http://localhost:8080';
   console.log("Dev Server Started");
 }
