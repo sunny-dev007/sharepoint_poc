@@ -1,0 +1,33 @@
+node_modules
+.idea/inspectionProfiles/Project_Default.xml
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/workspace.xml
+.idea/Web.AIManager.iml
+.idea/vcs.xml
+.idea/modules.xml
+.idea/misc.xml
+.idea/.gitignore
+prompts.xlsx
+testing.ipynb
+demo notes.txt
+.env
+client/build
+accessdw.sql
+bmd/
+SFRAWProjectsSample.xlsx
+upload_data.ipynb
+pyai/
+.vscode/settings.json
+/tests
+/tests-examples
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+files/example wine data.csv
+test.js
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/e2e

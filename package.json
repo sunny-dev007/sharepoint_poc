@@ -1,0 +1,50 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "jest --testTimeout=30000",
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "startold": "concurrently \"npm run mockapi\" \"nodemon -w server.js server.js\"",
+    "mockapi": "json-server -p 3333 -w db.json db.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": "18.14"
+  },
+  "dependencies": {
+    "@microsoft/microsoft-graph-client": "^3.0.6",
+    "@mozilla/readability": "^0.4.4",
+    "adal-node": "^0.2.1",
+    "archiver": "^7.0.1",
+    "axios": "^0.21.0",
+    "body-parser": "^1.19.0",
+    "cheerio": "^1.0.0-rc.12",
+    "compression": "^1.7.4",
+    "content-disposition": "^0.5.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.1.4",
+    "express": "^4.17.1",
+    "express-session": "^1.17.3",
+    "form-data": "^4.0.0",
+    "guid": "0.0.12",
+    "jsdom": "^22.0.0",
+    "mathjs": "^12.2.1",
+    "memorystore": "^1.6.2",
+    "moment": "^2.30.1",
+    "nodemon": "^2.0.21",
+    "url": "^0.11.0",
+    "uuid": "^8.3.1",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.45.1",
+    "@types/node": "^20.12.10",
+    "jest": "^29.6.4",
+    "supertest": "^6.3.3"
+  }
+}
